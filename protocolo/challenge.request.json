@@ -1,0 +1,7 @@
+{
+    "type": "game",
+    "sender": "client",
+    "action": "challenge",
+    "username": "user2",
+    "decision": 1
+}

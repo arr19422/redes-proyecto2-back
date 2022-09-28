@@ -1,0 +1,15 @@
+{
+    "type": "chat",
+    "messages": [
+        {
+            "username": "user2",
+            "text": "Hello, world!",
+            "date": "2019-01-01T00:00:00Z"
+        },
+        {
+            "username": "user1",
+            "text": "Hello, world!",
+            "date": "2019-01-01T00:00:00Z"
+        }
+    ]
+}

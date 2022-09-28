@@ -1,0 +1,9 @@
+{
+    "type": "game",
+    "seder": "client",
+    "action": "send cards",
+    "username": "username",
+    "room": "room1",
+    "card": 1,
+    "truth": 1
+}
