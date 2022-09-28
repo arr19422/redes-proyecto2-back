@@ -1,0 +1,7 @@
+{
+    "type": "game",
+    "sender": "client",
+    "action": "get cards",
+    "usuario": "usuario1",
+    "room": "room1"
+}

@@ -1,0 +1,6 @@
+{
+    "type": "game",
+    "sender": "server",
+    "action": "start challenge",
+    "username": "user2"
+}
