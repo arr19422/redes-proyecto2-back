@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const PORT = 3000
-const { addUser, removeUser, getUser, getUsersInRoom } = require("./Game/Game")
+const { addUser, removeUser, getCards, getUsersInRoom } = require("./Game/Game")
 
 //New imports
 const http = require("http").Server(app)
@@ -43,7 +43,21 @@ socketIO.on("connection", (socket) => {
     })
   })
 
-  socket.on("startGame", ({ ...data }) => {})
+  socket.on("getCards", ({ ...data }) => {
+    const cards = getCards(data.room)
+    cards.forEach((data) => {
+      socketIO.to(data.id).emit("message", {
+        type: "game",
+        sender: "server",
+        action: "getCards",
+        cards: data.cards
+      })
+    })
+  })
+
+  socket.on("sendCards", ({ ...data }) => {
+
+  })
 
   socket.on("disconnecting", () => {
     console.log(socket.rooms) // the Set contains at least the socket ID
