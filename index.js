@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express()
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 const { addUser, removeUser, getCards, getUsersInRoom, sendCards, challenge } = require("./Game/Game")
 
 //New imports
@@ -11,7 +11,7 @@ app.use(cors())
 
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "ec2-3-15-32-175.us-east-2.compute.amazonaws.com",
+    origin: "http://localhost:3000",
   },
 })
 
