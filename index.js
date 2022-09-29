@@ -12,6 +12,7 @@ app.use(cors())
 const socketIO = require("socket.io")(http, {
   cors: {
     origin: "http://localhost:3000",
+    origin: "http://localhost:4000",
   },
 })
 
@@ -19,7 +20,6 @@ socketIO.on("connection", (socket) => {
   console.log("socket is ready for connection")
 
   socket.on("joinRoom", ({ ...roomObject }) => {
-    console.log(roomObject);
     const username = addUser({
       id: socket.id,
       username: roomObject.username,
@@ -27,6 +27,11 @@ socketIO.on("connection", (socket) => {
     })
 
     socket.join(roomObject.room)
+
+    if (username?.error) {
+      socket.emit("error", username.error)
+      return
+    }
 
     socket.emit("message", "Welcome to application " + username)
 
@@ -39,6 +44,14 @@ socketIO.on("connection", (socket) => {
       users: getUsersInRoom(roomObject.room),
     })
 
+  })
+
+  socket.on('roomUsers', ({ ...roomObject }) => {
+    socket.join(roomObject.room)
+    socketIO.to(roomObject.room).emit("roomUsers", {
+      room: roomObject.room,
+      users: getUsersInRoom(roomObject.room),
+    })
   })
 
   socket.on("getCards", ({ ...data }) => {
@@ -99,6 +112,7 @@ socketIO.on("connection", (socket) => {
   })
 
   socket.on("chat", ({ ...data }) => {
+    socket.join(data.room)
     socketIO.to(data.room).emit("messages", {
       type: "chat",
       username: data.username,
