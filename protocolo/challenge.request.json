@@ -3,5 +3,6 @@
     "sender": "client",
     "action": "challenge",
     "username": "user2",
+    "challended": "diego",
     "decision": 1
 }

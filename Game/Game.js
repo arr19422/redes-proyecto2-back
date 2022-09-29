@@ -1,7 +1,6 @@
 const users = []
 const roomCards = []
 const usersCards = []
-const actualTurn = []
 const usedCards = []
 const isTruth = []
 

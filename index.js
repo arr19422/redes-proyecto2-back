@@ -43,7 +43,7 @@ socketIO.on("connection", (socket) => {
   socket.on("getCards", ({ ...data }) => {
     const cards = getCards(data.room)
     cards.forEach((data) => {
-      socketIO.to(data.id).emit("message", {
+      socketIO.to(data.id).emit("getCards", {
         type: "game",
         sender: "server",
         action: "getCards",
@@ -54,7 +54,7 @@ socketIO.on("connection", (socket) => {
 
   socket.on("sendCards", ({ ...data }) => {
     const res = sendCards(data.username, data.room, data.card, data.truth)
-    socketIO.to(res.id).emit("message", {
+    socketIO.to(res.id).emit("sendCards", {
       type: "game",
       sender: "server",
       action: "sendCards",
@@ -69,7 +69,6 @@ socketIO.on("connection", (socket) => {
       messages: data.text,
       date: data.date
     })
-
   })
 
   socket.on("disconnecting", () => {
