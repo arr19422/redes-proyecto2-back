@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const PORT = 3000
-const { addUser, removeUser, getCards, getUsersInRoom } = require("./Game/Game")
+const { addUser, removeUser, getCards, getUsersInRoom, sendCards } = require("./Game/Game")
 
 //New imports
 const http = require("http").Server(app)
@@ -38,9 +38,6 @@ socketIO.on("connection", (socket) => {
       users: getUsersInRoom(roomObject.room),
     })
 
-    socketIO.to(roomObject.room).emit("roomSettings", {
-      ...roomObject,
-    })
   })
 
   socket.on("getCards", ({ ...data }) => {
@@ -56,6 +53,22 @@ socketIO.on("connection", (socket) => {
   })
 
   socket.on("sendCards", ({ ...data }) => {
+    const res = sendCards(data.username, data.room, data.card, data.truth)
+    socketIO.to(res.id).emit("message", {
+      type: "game",
+      sender: "server",
+      action: "sendCards",
+      cards: res.cards
+    })
+  })
+
+  socket.on("chat", ({ ...data }) => {
+    socketIO.to(data.room).emit("messages", {
+      type: "chat",
+      username: data.username,
+      messages: data.text,
+      date: data.date
+    })
 
   })
 
@@ -64,6 +77,7 @@ socketIO.on("connection", (socket) => {
   })
 
   socket.on("disconnect", ({ ...roomObject }) => {
+    removeUser(roomObject.id)
     socket.broadcast
       .to(roomObject.room)
       .emit("message", `${roomObject.user} left the room`)

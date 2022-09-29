@@ -2,6 +2,8 @@ const users = []
 const roomCards = []
 const usersCards = []
 const actualTurn = []
+const usedCards = []
+const isTruth = []
 
 const addUser = ({ id, username, room }) => {
   const existingRoom = roomCards.find((name) => name.room === room)
@@ -65,10 +67,29 @@ const getCards = (room) => {
   return usersCards
 }
 
-const getUser = (id) => users.find((user) => user.id === id)
+const sendCards = (user, room, pos, truth) => {
+  const actualUser = getUser(user, room)
+  usedCards.push({
+    card: actualUser.cards[pos],
+    room: room
+  })
+
+  isTruth.push({
+    bool: truth,
+    room: room
+  })
+
+  usersCards[updateUser(user, room, pos)].cards.splice(pos, 1)
+
+  return usersCards[updateUser(user, room, pos)]
+}
+
+const getUser = (username, room) => usersCards.find((user) => user.username === username && user.room === room) 
+
+const updateUser = (username, room) => usersCards.findIndex((user) => user.username === username && user.room === room) 
 
 const getUsersInRoom = (room) => users.filter((name) => name.room === room)
 
 const getCardsRoom = (room) => roomCards.filter((name) => name.room === room)
 
-module.exports = { addUser, removeUser, getUser, getUsersInRoom, getCards }
+module.exports = { addUser, removeUser, getUsersInRoom, getCards, sendCards }
