@@ -33,9 +33,9 @@ const addUser = ({ id, username, room }) => {
   return username
 }
 
-const removeUser = (id) => {
+const removeUser = (username) => {
   const index = users.findIndex((user) => {
-    user.username === user
+    user.username === username
   })
 
   if (index !== -1) {
@@ -68,27 +68,73 @@ const getCards = (room) => {
 
 const sendCards = (user, room, pos, truth) => {
   const actualUser = getUser(user, room)
-  usedCards.push({
-    card: actualUser.cards[pos],
-    room: room
-  })
+  const actualUsed = getUsed(room)
+  if (!actualUsed){
+    usedCards.push({
+      cards: [actualUser.cards[pos]],
+      room: room,
+    })
+  } else {
+    const toPush = actualUsed.cards
+    toPush.push(actualUser.cards[pos])
+    usedCards.push({
+      cards: toPush,
+      room: room,
+    })
+  }
+
+
 
   isTruth.push({
     bool: truth,
-    room: room
+    room: room,
   })
 
-  usersCards[updateUser(user, room, pos)].cards.splice(pos, 1)
+  usersCards[updateUser(user, room)].cards.splice(pos, 1)
 
-  return usersCards[updateUser(user, room, pos)]
+  return usersCards[updateUser(user, room)]
 }
 
-const getUser = (username, room) => usersCards.find((user) => user.username === username && user.room === room) 
+const challenge = (username, room, challended) => {
+  const actualTruth = getTruth(room)
+  const actualUsed = getUsed(room)
+  if (actualTruth.bool) {
+    for (let i = 0; i < actualUsed.cards.length; i++) {
+      const element = actualUsed.cards[i]
+      usersCards[updateUser(username, room)].cards.push(element)
+    }
+    usedCards = []
+    return { dataU: usersCards[updateUser(username, room)], dataC: usersCards[updateUser(challended, room)], bool: false }
+  }
+  for (let i = 0; i < actualUsed.cards.length; i++) {
+    const element = actualUsed.cards[i]
+    usersCards[updateUser(challended, room)].cards.push(element)
+  }
+  usedCards = []
+  return { dataU: usersCards[updateUser(username, room)], dataC: usersCards[updateUser(challended, room)],  bool: true }
+}
 
-const updateUser = (username, room) => usersCards.findIndex((user) => user.username === username && user.room === room) 
+const getUser = (username, room) =>
+  usersCards.find((user) => user.username === username && user.room === room)
+
+const getTruth = (room) => isTruth.find((user) => user.room === room)
+
+const getUsed = (room) => usedCards.find((user) => user.room === room)
+
+const updateUser = (username, room) =>
+  usersCards.findIndex(
+    (user) => user.username === username && user.room === room
+  )
 
 const getUsersInRoom = (room) => users.filter((name) => name.room === room)
 
 const getCardsRoom = (room) => roomCards.filter((name) => name.room === room)
 
-module.exports = { addUser, removeUser, getUsersInRoom, getCards, sendCards }
+module.exports = {
+  addUser,
+  removeUser,
+  getUsersInRoom,
+  getCards,
+  sendCards,
+  challenge,
+}

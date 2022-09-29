@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 const PORT = 3000
-const { addUser, removeUser, getCards, getUsersInRoom, sendCards } = require("./Game/Game")
+const { addUser, removeUser, getCards, getUsersInRoom, sendCards, challenge } = require("./Game/Game")
 
 //New imports
 const http = require("http").Server(app)
@@ -19,9 +19,10 @@ socketIO.on("connection", (socket) => {
   console.log("socket is ready for connection")
 
   socket.on("joinRoom", ({ ...roomObject }) => {
+    console.log(roomObject);
     const username = addUser({
       id: socket.id,
-      username: roomObject.user,
+      username: roomObject.username,
       room: roomObject.room,
     })
 
@@ -31,7 +32,7 @@ socketIO.on("connection", (socket) => {
 
     socket.broadcast
       .to(roomObject.room)
-      .emit("message", `${roomObject.user} has joined to the room`)
+      .emit("message", `${roomObject.username} has joined to the room`)
 
     socketIO.to(roomObject.room).emit("roomUsers", {
       room: roomObject.room,
@@ -60,6 +61,41 @@ socketIO.on("connection", (socket) => {
       action: "sendCards",
       cards: res.cards
     })
+  })
+
+  socket.on("challenge", ({ ...data }) => {
+    const res = challenge(data.username, data.room, data.challended)
+    if (!res.bool){
+      socketIO.to(res.dataU.id).emit("challenge", {
+        type: "game",
+        sender: "server",
+        action: "challenge",
+        cards: res.dataU.cards,
+        message: "It was truth, you pick all the cards in pool"
+      })
+      socketIO.to(res.dataC.id).emit("challenge", {
+        type: "game",
+        sender: "server",
+        action: "challenge",
+        cards: res.dataC.cards,
+        message: "He picks all the cards in pool, you are safe"
+      })
+    } else {
+      socketIO.to(res.dataU.id).emit("challenge", {
+        type: "game",
+        sender: "server",
+        action: "challenge",
+        cards: res.dataU.cards,
+        message: "you discovered the liar, he picks all the cards in pool"
+      })
+      socketIO.to(res.dataC.id).emit("challenge", {
+        type: "game",
+        sender: "server",
+        action: "challenge",
+        cards: res.dataC.cards,
+        message: "you got caught! you pick all the cards in pool"
+      })
+    }
   })
 
   socket.on("chat", ({ ...data }) => {
