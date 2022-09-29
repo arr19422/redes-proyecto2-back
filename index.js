@@ -11,7 +11,7 @@ app.use(cors())
 
 const socketIO = require("socket.io")(http, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "ec2-3-15-32-175.us-east-2.compute.amazonaws.com",
   },
 })
 
