@@ -7,7 +7,7 @@ const { addUser, removeUser, getCards, getUsersInRoom, sendCards, challenge } = 
 const http = require("http").Server(app)
 const cors = require("cors")
 
-app.use(coeers())
+app.use(cors())
 
 const socketIO = require("socket.io")(http, {
   cors: {
