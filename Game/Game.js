@@ -9,7 +9,7 @@ const addUser = ({ id, username, room }) => {
 
   if (!existingRoom) {
     let cards = []
-    for (let i = 1; i < 53; i++) {
+    for (let i = 1; i < 52; i++) {
       cards.push(i)
     }
 
