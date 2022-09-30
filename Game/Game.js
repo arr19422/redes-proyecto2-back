@@ -1,8 +1,8 @@
 const users = []
 const roomCards = []
 const usersCards = []
-const usedCards = []
 const isTruth = []
+let usedCards = []
 
 const addUser = ({ id, username, room }) => {
   const existingRoom = roomCards.find((name) => name.room === room)
