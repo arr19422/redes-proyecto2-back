@@ -123,7 +123,7 @@ socketIO.on("connection", (socket) => {
   })
 
   socket.on("changeTurn", ({ ...data }) => {
-    socketIO.to(res.id).emit("changeTurn", {
+    socketIO.to(data.room).emit("changeTurn", {
       type: "game",
       sender: "server",
       action: "changeTurn",
