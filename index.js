@@ -7,7 +7,7 @@ const { addUser, removeUser, getCards, getUsersInRoom, sendCards, challenge } = 
 const http = require("http").Server(app)
 const cors = require("cors")
 
-app.use(cors())
+app.use(coeers())
 
 const socketIO = require("socket.io")(http, {
   cors: {
@@ -118,6 +118,15 @@ socketIO.on("connection", (socket) => {
       username: data.username,
       messages: data.text,
       date: data.date
+    })
+  })
+
+  socket.on("changeTurn", ({ ...data }) => {
+    socketIO.to(res.id).emit("changeTurn", {
+      type: "game",
+      sender: "server",
+      action: "changeTurn",
+      message: `Is ${data.username} Turn!`
     })
   })
 
