@@ -83,8 +83,6 @@ const sendCards = (user, room, pos, truth) => {
     })
   }
 
-
-
   isTruth.push({
     bool: truth,
     room: room,
@@ -98,7 +96,7 @@ const sendCards = (user, room, pos, truth) => {
 const challenge = (username, room, challended) => {
   const actualTruth = getTruth(room)
   const actualUsed = getUsed(room)
-  if (actualTruth.bool) {
+  if (actualTruth.bool && actualUsed) {
     for (let i = 0; i < actualUsed.cards.length; i++) {
       const element = actualUsed.cards[i]
       usersCards[updateUser(username, room)].cards.push(element)
@@ -106,9 +104,11 @@ const challenge = (username, room, challended) => {
     usedCards = []
     return { dataU: usersCards[updateUser(username, room)], dataC: usersCards[updateUser(challended, room)], bool: false }
   }
-  for (let i = 0; i < actualUsed.cards.length; i++) {
-    const element = actualUsed.cards[i]
-    usersCards[updateUser(challended, room)].cards.push(element)
+  if (actualUsed) {
+    for (let i = 0; i < actualUsed.cards.length; i++) {
+      const element = actualUsed.cards[i]
+      usersCards[updateUser(challended, room)].cards.push(element)
+    }
   }
   usedCards = []
   return { dataU: usersCards[updateUser(username, room)], dataC: usersCards[updateUser(challended, room)],  bool: true }
